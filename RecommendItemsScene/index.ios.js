@@ -3,8 +3,9 @@ import {
     StyleSheet,
     NavigatorIOS,
     ListView,
+    View,
+    Image,
     Text,
-    View
 } from 'react-native';
 
 export default class RecommendItemsScene extends Component {
@@ -53,7 +54,17 @@ class RecommendItemsList extends Component {
     renderRow(rowData) {
         return (
             <View style={styles.cell}>
-                <Text>{rowData.name}</Text>
+                <View>
+                    <Image
+                        style={{width: 80, height: 80}}
+                        source={{uri: rowData.image_url}}
+                    />
+                </View>
+                <View>
+                    <Text>{rowData.name}</Text>
+                    <Text>{rowData.price}円</Text>
+                    <Text>{rowData.description}</Text>
+                </View>
             </View>
         );
     }
@@ -77,14 +88,15 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        alignItems: 'stretch',
     },
     cell: {
         flex: 1,
-        justifyContent: 'center',
+        flexDirection: 'row',
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingRight: 12,
         marginLeft: 12,
         borderBottomColor: '#bbb',
         borderBottomWidth: StyleSheet.hairlineWidth,
-        height: 44,
     }
 });
