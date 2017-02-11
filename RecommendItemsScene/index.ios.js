@@ -6,7 +6,10 @@ import {
     View,
     Image,
     Text,
+    TouchableHighlight,
 } from 'react-native';
+
+import ItemDetailsScene from '../ItemDetailsScene';
 
 export default class RecommendItemsScene extends Component {
     render() {
@@ -36,8 +39,6 @@ class RecommendItemsList extends Component {
         fetch("http://localhost:3000/items/recommended.json")
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson);
-
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(responseJson)
                 })
@@ -51,21 +52,35 @@ class RecommendItemsList extends Component {
         this.loadItems();
     }
 
+    handleNextPress(selectItem) {
+        this.props.navigator.push({
+            component: ItemDetailsScene,
+            title: selectItem.name,
+            passProps: {itemId: selectItem.id}
+        })
+    }
+
     renderRow(rowData) {
         return (
-            <View style={styles.cell}>
-                <View>
-                    <Image
-                        style={{width: 80, height: 80}}
-                        source={{uri: rowData.image_url}}
-                    />
+            <TouchableHighlight
+                onPress={() => this.handleNextPress({id: rowData.id, name: rowData.name})}
+                underlayColor="#ddd"
+            >
+                <View style={styles.cell}>
+                    <View>
+                        <Image
+                            resizeMode='contain'
+                            style={styles.itemImage}
+                            source={{uri: rowData.image_url}}
+                        />
+                    </View>
+                    <View>
+                        <Text>{rowData.name}</Text>
+                        <Text>{rowData.price}円</Text>
+                        <Text>{rowData.description}</Text>
+                    </View>
                 </View>
-                <View>
-                    <Text>{rowData.name}</Text>
-                    <Text>{rowData.price}円</Text>
-                    <Text>{rowData.description}</Text>
-                </View>
-            </View>
+            </TouchableHighlight>
         );
     }
 
@@ -74,7 +89,7 @@ class RecommendItemsList extends Component {
             <View style={styles.container}>
                 <ListView
                     dataSource={this.state.dataSource}
-                    renderRow={this.renderRow}
+                    renderRow={this.renderRow.bind(this)}
                     enableEmptySections={true}
                 />
             </View>
@@ -98,5 +113,10 @@ const styles = StyleSheet.create({
         marginLeft: 12,
         borderBottomColor: '#bbb',
         borderBottomWidth: StyleSheet.hairlineWidth,
-    }
+    },
+    itemImage: {
+        width: 80,
+        height: 80,
+        backgroundColor: '#fafaf4',
+    },
 });
