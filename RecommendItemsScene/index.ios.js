@@ -27,16 +27,33 @@ class RecommendItemsList extends Component {
 
         const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: dataSource.cloneWithRows([
-                'hoge', 'fuga', 'piyo'
-            ])
+            dataSource: dataSource.cloneWithRows([])
         }
+    }
+
+    loadItems() {
+        fetch("http://localhost:3000/items/recommended.json")
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(responseJson)
+                })
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    componentDidMount() {
+        this.loadItems();
     }
 
     renderRow(rowData) {
         return (
             <View style={styles.cell}>
-                <Text>{rowData}</Text>
+                <Text>{rowData.name}</Text>
             </View>
         );
     }
@@ -47,6 +64,7 @@ class RecommendItemsList extends Component {
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
+                    enableEmptySections={true}
                 />
             </View>
         );
